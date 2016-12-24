@@ -25,10 +25,27 @@
           if (cartWidth > windowWidth) {
             $cartContents.addClass('is-outside-horizontal');
           }
+
+          $cartButton.toggleClass('.commerce-cart-block--link__open');
+
           // Toggle the expanded class.
           $cartContents
             .toggleClass('commerce-cart-block--contents__expanded')
             .slideToggle();
+
+          if ($cartContents.hasClass('commerce-cart-block--contents__expanded')) {
+            $(document).on('click.commerceCartButtons', function (event) {
+              if (!$(event.target).closest($cart).length) {
+                $cartButton.toggleClass('.commerce-cart-block--link__open');
+
+                $cartContents
+                  .toggleClass('commerce-cart-block--contents__expanded')
+                  .slideToggle();
+
+                $(document).off('click.commerceCartButtons');
+              }
+            });
+          }
         });
       }
     }
