@@ -26,7 +26,7 @@
             $cartContents.addClass('is-outside-horizontal');
           }
 
-          $cartButton.toggleClass('.commerce-cart-block--link__open');
+          $cartButton.toggleClass('commerce-cart-block--link__open');
 
           // Toggle the expanded class.
           $cartContents
