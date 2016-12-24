@@ -1,0 +1,16 @@
+<div{{ attributes.addClass('commerce-cart-block commerce-cart-block--type-button') }}>
+  <div class="commerce-cart-block--summary">
+    <a class="commerce-cart-block--link__expand" href="{{ url }}">
+      <span class="commerce-cart-block--summary__icon">{{ icon }}</span>
+      <span class="commerce-cart-block--summary__count">{{ count_text }}</span>
+    </a>
+  </div>
+
+  {% if content %}
+  <div class="commerce-cart-block--contents">
+    <div class="commerce-cart-block--contents__inner">
+      {{ content }}
+    </div>
+  </div>
+  {% endif %}
+</div>

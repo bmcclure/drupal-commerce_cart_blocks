@@ -1,0 +1,8 @@
+{
+  "name": "drupal/commerce_cart_blocks",
+  "type": "drupal-module",
+  "description": "Commerce Cart Blocks",
+  "homepage": "https://github.com/TopFloorTech/drupal-commerce_cart_blocks",
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev"
+}

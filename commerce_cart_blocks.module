@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function commerce_cart_blocks_theme($existing, $type, $theme, $path) {
+  return [
+    'commerce_cart_blocks_cart' => [
+      'variables' => [
+        'count' => NULL,
+        'heading' => NULL,
+        'content' => NULL,
+        'links' => [],
+      ],
+    ],
+    'commerce_cart_blocks_cart_button' => [
+      'variables' => [
+        'count' => NULL,
+        'icon' => NULL,
+        'count_text' => '',
+        'url' => NULL,
+        'content' => NULL,
+      ],
+    ],
+  ];
+}

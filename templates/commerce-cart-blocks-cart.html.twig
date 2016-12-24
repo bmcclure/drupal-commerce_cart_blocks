@@ -1,0 +1,19 @@
+<div{{ attributes.addClass('commerce-cart-block commerce-cart-block--type-cart') }}>
+  {% if heading %}
+    <div class="commerce-cart-block--contents__heading">
+      {{ heading }}
+    </div>
+  {% endif %}
+
+  {% if content %}
+    <div class="commerce-cart-block--contents__items">
+      {{ content }}
+    </div>
+  {% endif %}
+
+  {% if links %}
+    <div class="commerce-cart-block--contents__links">
+      {{ links }}
+    </div>
+  {% endif %}
+</div>
