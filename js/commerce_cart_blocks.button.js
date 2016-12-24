@@ -36,7 +36,7 @@
           if ($cartContents.hasClass('commerce-cart-block--contents__expanded')) {
             $(document).on('click.commerceCartButtons', function (event) {
               if (!$(event.target).closest($cart).length) {
-                $cartButton.toggleClass('.commerce-cart-block--link__open');
+                $cartButton.toggleClass('commerce-cart-block--link__open');
 
                 $cartContents
                   .toggleClass('commerce-cart-block--contents__expanded')
