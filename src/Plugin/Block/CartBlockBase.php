@@ -65,6 +65,7 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
    */
   public function defaultConfiguration() {
     return [
+      'hide_if_empty' => FALSE,
       'display_links' => ['cart' => 'cart'],
       'cart_link_text' => 'Cart',
       'checkout_link_text' => 'Checkout',
@@ -77,6 +78,13 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public function blockForm($form, FormStateInterface $form_state) {
+    $form['hide_if_empty'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Hide if empty'),
+      '#description' => $this->t('When checked, then the block will be hidden if the cart is empty.'),
+      '#default_value' => $this->configuration['hide_if_empty'],
+    ];
+
     $form['display_links'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Display links'),
@@ -123,6 +131,7 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
+    $this->setConfigurationValue('hide_if_empty', $form_state->getValue('hide_if_empty'));
     $this->setConfigurationValue('display_links', $form_state->getValue('display_links'));
     $this->setConfigurationValue('cart_link_text', $form_state->getValue('cart_link_text'));
     $this->setConfigurationValue('checkout_link_text', $form_state->getValue('checkout_link_text'));
@@ -220,6 +229,10 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
     });
 
     return $carts;
+  }
+
+  protected function shouldHide() {
+    return ($this->configuration['hide_if_empty'] && $this->getCartCount() == 0);
   }
 
   /**

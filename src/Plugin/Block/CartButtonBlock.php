@@ -77,6 +77,10 @@ class CartButtonBlock extends CartBlock {
   }
 
   public function build() {
+    if ($this->shouldHide()) {
+      return [];
+    }
+
     return [
       '#attached' => [
         'library' => $this->getLibraries(),

@@ -64,6 +64,10 @@ class CartBlock extends CartBlockBase {
    *   A render array.
    */
   public function build() {
+    if ($this->shouldHide()) {
+      return [];
+    }
+
     return [
       '#attached' => [
         'library' => $this->getLibraries(),
