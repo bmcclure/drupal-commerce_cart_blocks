@@ -34,13 +34,9 @@ class CartButtonBlock extends CartBlock {
     $form = parent::blockForm($form, $form_state);
 
     $form['commerce_cart_dropdown'] = [
-      '#type' => 'radios',
+      '#type' => 'checkbox',
       '#title' => $this->t('Display cart contents in a dropdown'),
-      '#default_value' => (int) $this->configuration['dropdown'],
-      '#options' => [
-        $this->t('No'),
-        $this->t('Yes'),
-      ],
+      '#default_value' => $this->configuration['dropdown'],
     ];
 
     $form['icon_type'] = [
@@ -81,6 +77,17 @@ class CartButtonBlock extends CartBlock {
       return [];
     }
 
+    $content = [];
+    if ($this->configuration['dropdown']) {
+      $content = [
+        '#theme' => 'commerce_cart_blocks_cart',
+        '#count' => $this->getCartCount(),
+        '#heading' => $this->buildHeading(),
+        '#content' => $this->getCartViews(),
+        '#links' => $this->buildLinks(),
+      ];
+    }
+
     return [
       '#attached' => [
         'library' => $this->getLibraries(),
@@ -88,15 +95,10 @@ class CartButtonBlock extends CartBlock {
       '#theme' => 'commerce_cart_blocks_cart_button',
       '#count' => $this->getCartCount(),
       '#count_text' => $this->getCountText(),
+      '#in_cart' => $this->isInCart(),
       '#icon' => $this->buildIcon(),
       '#url' => Url::fromRoute('commerce_cart.page')->toString(),
-      '#content' => [
-        '#theme' => 'commerce_cart_blocks_cart',
-        '#count' => $this->getCartCount(),
-        '#heading' => $this->buildHeading(),
-        '#content' => $this->getCartViews(),
-        '#links' => $this->buildLinks(),
-      ],
+      '#content' => $content,
       '#cache' => $this->buildCache(),
     ];
   }

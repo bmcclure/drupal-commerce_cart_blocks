@@ -1,6 +1,15 @@
-<div{{ attributes.addClass('commerce-cart-block commerce-cart-block--type-button') }}>
+{%
+set classes = [
+  'commerce-cart-block',
+  'commerce-cart-block--type-button',
+  in_cart ? 'is-inCart',
+]
+%}
+
+
+<div{{ attributes.addClass(classes) }}>
   <div class="commerce-cart-block--summary">
-    <a class="commerce-cart-block--link__expand" href="{{ url }}">
+    <a class="commerce-cart-block--link{{ content ? " commerce-cart-block--link__expand" }}" href="{{ url }}">
       <span class="commerce-cart-block--summary__icon">{{ icon }}</span>
       <span class="commerce-cart-block--summary__count">{{ count_text }}</span>
     </a>

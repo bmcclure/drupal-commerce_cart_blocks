@@ -77,6 +77,7 @@ class CartBlock extends CartBlockBase {
       '#heading' => $this->buildHeading(),
       '#content' => $this->getCartViews(),
       '#links' => $this->buildLinks(),
+      '#in_cart' => $this->isInCart(),
       '#cache' => $this->buildCache(),
     ];
   }

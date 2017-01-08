@@ -149,6 +149,10 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
     ];
   }
 
+  protected function isInCart() {
+    return \Drupal::routeMatch()->getRouteName() == 'commerce_cart.page';
+  }
+
   protected function buildLinks() {
     $links = [];
 
