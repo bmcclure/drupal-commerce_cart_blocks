@@ -21,6 +21,7 @@ class CartBlock extends CartBlockBase {
     return [
         'display_heading' => FALSE,
         'heading_text' => '@items in your cart',
+        'show_items' => TRUE,
       ] + parent::defaultConfiguration();
   }
 
@@ -44,6 +45,13 @@ class CartBlock extends CartBlockBase {
       '#default_value' => $this->configuration['heading_text'],
     ];
 
+    $form['show_items'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Show items'),
+      '#description' => $this->t('Show the cart items in a table.'),
+      '#default_value' => $this->configuration['show_items'],
+    ];
+
     return $form;
   }
 
@@ -53,6 +61,7 @@ class CartBlock extends CartBlockBase {
   public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['display_heading'] = $form_state->getValue('display_heading');
     $this->configuration['heading_text'] = $form_state->getValue('heading_text');
+    $this->configuration['show_items'] = $form_state->getValue('show_items');
 
     parent::blockSubmit($form, $form_state);
   }
@@ -75,11 +84,23 @@ class CartBlock extends CartBlockBase {
       '#theme' => 'commerce_cart_blocks_cart',
       '#count' => $this->getCartCount(),
       '#heading' => $this->buildHeading(),
-      '#content' => $this->getCartViews(),
+      '#content' => $this->buildItems(),
       '#links' => $this->buildLinks(),
       '#in_cart' => $this->isInCart(),
       '#cache' => $this->buildCache(),
     ];
+  }
+
+  protected function buildItems() {
+    $showItems = $this->configuration['show_items'];
+
+    $items = [];
+
+    if ($showItems) {
+      $items = $this->getCartViews();
+    }
+
+    return $items;
   }
 
   protected function buildHeading() {
