@@ -20,7 +20,7 @@ class CartBlock extends CartBlockBase {
   public function defaultConfiguration() {
     return [
         'display_heading' => FALSE,
-        'heading_text' => '@items items in your cart',
+        'heading_text' => '@items in your cart',
       ] + parent::defaultConfiguration();
   }
 
