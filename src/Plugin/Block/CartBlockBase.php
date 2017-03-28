@@ -159,11 +159,20 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
     $displayLinks = $this->configuration['display_links'];
 
     if ($displayLinks['checkout']) {
-      $links[] = [
-        '#type' => 'link',
-        '#title' => $this->t($this->configuration['checkout_link_text']),
-        '#url' => Url::fromRoute('commerce_cart.page'),
-      ];
+      $carts = $this->getCarts();
+
+      if (!empty($carts)) {
+        /** @var \Drupal\commerce_order\Entity\OrderInterface $cart */
+        $cart = array_shift($carts);
+
+        $links[] = [
+          '#type' => 'link',
+          '#title' => $this->t($this->configuration['checkout_link_text']),
+          '#url' => Url::fromRoute('commerce_checkout.form', [
+            'commerce_order' => $cart->id(),
+          ]),
+        ];
+      }
     }
 
     if ($displayLinks['cart']) {
