@@ -1,9 +1,21 @@
-ABOUT
-=====
+**SUMMARY**
 
-Provides new types of Cart blocks for Drupal Commerce.
+This module provides a cart button block and a full cart block for Commerce 2.x that are highly configurable.
 
-DEPENDENCIES
-============
+**REQUIREMENTS**
 
-- Commerce
+* Drupal Commerce 2.x
+
+**INSTALLATION**
+
+Install as usual, see http://drupal.org/node/1897420 for further information.
+
+**ALTERNATIVES**
+
+If your needs don't extend beyond it, you can simply use the default cart block
+included with Commerce 2.x.
+
+**CONTACT**
+
+Current maintainers:
+* [bmcclure](https://www.drupal.org/user/278485)
