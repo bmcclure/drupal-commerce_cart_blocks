@@ -10,6 +10,8 @@ This module provides a cart button block and a full cart block for Commerce 2.x 
 
 Install as usual, see http://drupal.org/node/1897420 for further information.
 
+AJAX add to cart functionality can be enabled by editing your order type(s) and checking the "Enable AJAX for Commerce Cart Blocks" option.
+
 **ALTERNATIVES**
 
 If your needs don't extend beyond it, you can simply use the default cart block
