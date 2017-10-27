@@ -253,6 +253,8 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
    *
    * @return array An array of view ids keyed by cart order ID.
    * An array of view ids keyed by cart order ID.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
   protected function getCartViews() {
     $carts = $this->getCarts();

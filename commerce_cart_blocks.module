@@ -82,6 +82,8 @@ function commerce_cart_blocks_form_commerce_order_type_form_alter(&$form, FormSt
  *   The form array.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state object.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function commerce_cart_blocks_order_type_form_submit($form, FormStateInterface $form_state) {
   /** @var \Drupal\commerce_order\Entity\OrderTypeInterface $order_type */
@@ -102,6 +104,8 @@ function commerce_cart_blocks_order_type_form_submit($form, FormStateInterface $
  *
  * @return array
  *   An array of commerce_cart_blocks_ajax settings
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  */
 function commerce_cart_blocks_ajax_settings(\Drupal\Core\Entity\EntityInterface $entity) {
   /** @var \Drupal\commerce_order\Entity\OrderItemTypeInterface $item_type */
@@ -135,7 +139,7 @@ function commerce_cart_blocks_form_commerce_order_item_add_to_cart_form_alter(&$
     if ($entity && $settings['enabled']) {
       $form['commerce_cart_blocks_ajax'] = [
         '#type' => 'value',
-        '#value' => $settings
+        '#value' => $settings,
       ];
 
       // Add use ajax to button
@@ -155,6 +159,7 @@ function commerce_cart_blocks_form_commerce_order_item_add_to_cart_form_alter(&$
 
 /**
  * Ajax callback for variation product form.
+ *
  * @param array $form
  *   The form array.
  *
@@ -163,13 +168,15 @@ function commerce_cart_blocks_form_commerce_order_item_add_to_cart_form_alter(&$
  *
  * @return \Drupal\Core\Ajax\AjaxResponse
  *   The AJAX response.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  */
 function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface &$form_state) {
   $response = new \Drupal\Core\Ajax\AjaxResponse();
 
   $ajax_settings = $form_state->getValue('commerce_cart_blocks_ajax', [
     'modal_enabled' => TRUE,
-    'modal_title' => 'Cart'
+    'modal_title' => 'Cart',
   ]);
 
   // Update cart blocks after adding an item to cart
@@ -203,6 +210,8 @@ function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface &$fo
  *
  * @return HtmlCommand
  *   An AJAX command to replace the provided cart block.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  */
 function commerce_cart_blocks_render_cart_block_command($block_id) {
   $block = \Drupal::entityTypeManager()->getStorage('block')->load($block_id);
