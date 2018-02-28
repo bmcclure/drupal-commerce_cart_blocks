@@ -51,80 +51,24 @@ function commerce_cart_blocks_form_commerce_order_type_form_alter(&$form, FormSt
   $form['commerce_cart_blocks']['commerce_cart_blocks_ajax'] = [
     '#type' => 'checkbox',
     '#title' => t('Enable AJAX for Commerce Cart Blocks'),
-    '#weight' => 0,
     '#default_value' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax', FALSE),
   ];
 
   $form['commerce_cart_blocks']['commerce_cart_blocks_ajax_modal'] = [
     '#type' => 'checkbox',
     '#title' => t('Show a modal window after adding an item to the cart with AJAX'),
-    '#weight' => 1,
     '#default_value' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax_modal', TRUE),
     '#states' => [
-      'visible' => [':input[name="commerce_cart_blocks[commerce_cart_blocks_ajax]"]' => ['checked' => TRUE]],
-    ],
-  ];
-
-  $form['commerce_cart_blocks']['commerce_cart_blocks_links'] = [
-    '#type' => 'details',
-    '#title' => t('Add links to modal'),
-    '#description' => t('You can optionally add buttons to the modal window that link to the cart, checkout, or back to the current page.'),
-    '#weight' => 2,
-    '#open' => TRUE,
-    '#collapsible' => TRUE,
-    '#states' => [
-      'visible' => [':input[name="commerce_cart_blocks[commerce_cart_blocks_ajax]"]' => ['checked' => TRUE]],
-    ],
-  ];
-
-  $form['commerce_cart_blocks']['commerce_cart_blocks_links']['commerce_cart_blocks_add_cart'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Show View Cart link in modal'),
-    '#weight' => 0,
-    '#default_value' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_cart', TRUE),
-    '#states' => [
-      'visible' => [':input[name="commerce_cart_blocks[commerce_cart_blocks_ajax]"]' => ['checked' => TRUE]],
-    ],
-  ];
-
-  $form['commerce_cart_blocks']['commerce_cart_blocks_links']['commerce_cart_blocks_add_checkout'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Show Checkout link in modal'),
-    '#weight' => 1,
-    '#default_value' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_checkout', TRUE),
-    '#states' => [
-      'visible' => [':input[name="commerce_cart_blocks[commerce_cart_blocks_ajax]"]' => ['checked' => TRUE]],
-    ],
-  ];
-
-  $form['commerce_cart_blocks']['commerce_cart_blocks_links']['commerce_cart_blocks_add_keep_browsing'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Show Keep Browsing link in modal'),
-    '#weight' => 2,
-    '#default_value' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_keep_browsing', TRUE),
-    '#states' => [
-      'visible' => [':input[name="commerce_cart_blocks[commerce_cart_blocks_ajax]"]' => ['checked' => TRUE]],
+      'visible' => [':input[name="commerce_cart_blocks[commerce_cart_blocks_ajax]"]' => ['checked' => TRUE]]
     ],
   ];
 
   $form['commerce_cart_blocks']['commerce_cart_blocks_ajax_modal_title'] = [
     '#type' => 'textfield',
     '#title' => 'Title of the cart modal',
-    '#weight' => 3,
     '#default_value' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax_modal_title', 'Cart'),
     '#states' => [
-      'visible' => [':input[name="commerce_cart_blocks[commerce_cart_blocks_ajax]"]' => ['checked' => TRUE]],
-    ],
-  ];
-
-  $form['commerce_cart_blocks']['commerce_cart_blocks_append_block_id'] = [
-    '#type' => 'textfield',
-    '#title' => t('Block id to append cart to block'),
-    '#weight' => 4,
-    '#description' => t('Enter the block id the cart block immediately follows to append when entering the first cart item.'),
-    '#default_value' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_append_block_id', ''),
-    '#states' => [
-      'visible' => [':input[name="commerce_cart_blocks[commerce_cart_blocks_ajax]"]' => ['checked' => TRUE]],
+      'visible' => [':input[name="commerce_cart_blocks[commerce_cart_blocks_ajax]"]' => ['checked' => TRUE]]
     ],
   ];
 
@@ -148,11 +92,7 @@ function commerce_cart_blocks_order_type_form_submit($form, FormStateInterface $
   $order_type
     ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax', $settings['commerce_cart_blocks_ajax'])
     ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax_modal', $settings['commerce_cart_blocks_ajax_modal'])
-    ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_cart', $settings['commerce_cart_blocks_links']['commerce_cart_blocks_add_cart'])
-    ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_checkout', $settings['commerce_cart_blocks_links']['commerce_cart_blocks_add_checkout'])
-    ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_keep_browsing', $settings['commerce_cart_blocks_links']['commerce_cart_blocks_add_keep_browsing'])
     ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax_modal_title', $settings['commerce_cart_blocks_ajax_modal_title'])
-    ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_append_block_id', $settings['commerce_cart_blocks_append_block_id'])
     ->save();
 }
 
@@ -181,51 +121,38 @@ function commerce_cart_blocks_ajax_settings(\Drupal\Core\Entity\EntityInterface 
   return [
     'enabled' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax', FALSE),
     'modal_enabled' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax_modal', TRUE),
-    'cart' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_cart', FALSE),
-    'checkout' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_checkout', FALSE),
-    'keep_browsing' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_keep_browsing', FALSE),
     'modal_title' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax_modal_title', 'Cart'),
-    'append_block_id' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_append_block_id', ''),
   ];
 }
 
 /**
  * Implements hook_form_FORM_ID_alter().
- *
- * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  */
 function commerce_cart_blocks_form_commerce_order_item_add_to_cart_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $formObject = $form_state->getFormObject();
+  $object = $form_state->getFormObject();
 
-  if (is_object($formObject) && method_exists($formObject, 'getEntity')) {
-    $entity = $formObject->getEntity();
+  if ($object && method_exists($object, 'getEntity')) {
+    /** @var \Drupal\Core\Entity\EntityInterface $entity */
+    $entity = $object->getEntity();
+    $settings = commerce_cart_blocks_ajax_settings($entity);
 
-    if ($entity instanceof \Drupal\Core\Entity\EntityInterface) {
-      $settings = commerce_cart_blocks_ajax_settings($entity);
+    if ($entity && $settings['enabled']) {
+      $form['commerce_cart_blocks_ajax'] = [
+        '#type' => 'value',
+        '#value' => $settings,
+      ];
 
-      if ($settings['enabled']) {
-        $form['commerce_cart_blocks_ajax'] = [
-          '#type' => 'value',
-          '#value' => $settings,
-        ];
-
-        // Add use ajax to button
-        $wrapperId = \Drupal\Component\Utility\Html::getUniqueId($form_id . '-commerce_cart_blocks_ajax_wrapper');
-
-        $form['actions']['submit']['#attributes']['class'][] = 'use-ajax-submit';
-        $form['actions']['submit']['#prefix'] = '<div id="' . $wrapperId . '">';
-        $form['actions']['submit']['#ajax'] = [
-          'callback' => 'commerce_cart_blocks_ajax_callback',
-          'wrapper' => $wrapperId,
-          'effect' => 'fade',
-          'progress' => [
-            'type' => 'throbber',
-            'message' => t('Adding to Cart'),
-          ],
-        ];
-
-        $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
-      }
+      // Add use ajax to button
+      $form['actions']['submit']['#ajax'] = [
+        'callback' => 'commerce_cart_blocks_ajax_callback',
+        'wrapper' => 'all_form',
+        'effect' => 'fade',
+        'progress' => [
+          'type' => 'throbber',
+          'message' => t('Adding to Cart'),
+        ],
+      ];
+      $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
     }
   }
 }
@@ -241,6 +168,8 @@ function commerce_cart_blocks_form_commerce_order_item_add_to_cart_form_alter(&$
  *
  * @return \Drupal\Core\Ajax\AjaxResponse
  *   The AJAX response.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  */
 function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface &$form_state) {
   $response = new \Drupal\Core\Ajax\AjaxResponse();
@@ -262,69 +191,15 @@ function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface &$fo
       $query = \Drupal::entityQuery('block')
         ->condition('plugin', $block_type);
 
-      foreach ((array)$query->execute() as $block_id) {
+      foreach ($query->execute() as $block_id) {
         $response->addCommand(commerce_cart_blocks_render_cart_block_command($block_id));
       }
-    }
-
-    // Append the block when adding the first item to the cart
-    $cartCount = commerce_cart_blocks_cart_count();
-    if (1 == $cartCount) {
-      $response->addCommand(new \Drupal\Core\Ajax\AfterCommand(
-          $ajax_settings['append_block_id'],
-          commerce_cart_blocks_render_cart_block_command_append('cart')
-        )
-      );
     }
   }
 
   $messages = StatusMessages::renderMessages(NULL);
-  /** @var \Drupal\Core\Render\Markup $message */
-  $message = $messages['#message_list']['status'][0];
-  $message .= '<div class="commerce-cart-block--contents__links">';
-
-  // View cart link
-  if ($ajax_settings['cart']) {
-    $viewCartLink = '<a href="/cart" class="button viewCart">' . t('View Cart') . '</a>';
-    $message .= $viewCartLink;
-  }
-
-  // Checkout link
-  if ($ajax_settings['checkout']) {
-    // Get cart id for checkout link
-    $carts = commerce_cart_blocks_getCarts();
-    if (!empty($carts)) {
-      /** @var \Drupal\commerce_order\Entity\OrderInterface $cart */
-      $cart = array_shift($carts);
-    }
-
-    $checkoutLink = '<a href="/checkout/' . $cart->id() . '" class="button checkout">' . t('Checkout') . '</a>';
-    $message .= $checkoutLink;
-  }
-
-  // Keep browsing link
-  if ($ajax_settings['keep_browsing']) {
-    $keepBrowsingLink = '<a href="#" class="button keepBrowsing dialog-cancel">' . t('Keep Browsing') . '</a>';
-    $message .= $keepBrowsingLink;
-  }
-
-  $message .= '</div>';
-  $messages['#message_list']['status'][0] = \Drupal\Core\Render\Markup::create($message);
-  $dialogOptions = [
-    'width' => 'auto',
-    'maxWidth' => 500,
-    'height' => 'auto',
-    'modal' => TRUE,
-    'fluid' => TRUE,
-    'resizable' => FALSE,
-  ];
-
   if ($ajax_settings['modal_enabled']) {
-    $response->addCommand(new OpenModalDialogCommand(
-      t($ajax_settings['modal_title']),
-      $messages,
-      $dialogOptions
-    ));
+    $response->addCommand(new OpenModalDialogCommand(t($ajax_settings['modal_title']), $messages));
   }
 
   return $response;
@@ -335,80 +210,18 @@ function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface &$fo
  *
  * @return HtmlCommand
  *   An AJAX command to replace the provided cart block.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  */
 function commerce_cart_blocks_render_cart_block_command($block_id) {
-  try {
-    $block = \Drupal::entityTypeManager()->getStorage('block')->load($block_id);
-    $build = \Drupal::entityTypeManager()
-      ->getViewBuilder('block')
-      ->view($block);
+  $block = \Drupal::entityTypeManager()->getStorage('block')->load($block_id);
 
-    $render = \Drupal::service('renderer')->render($build);
-    $block_id = str_replace('_', '-', $block_id);
-    return new HtmlCommand('#block-' . $block_id, $render);
-  } catch (\Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException $e) {
-    return NULL;
-  }
-}
+  $build = \Drupal::entityTypeManager()
+    ->getViewBuilder('block')
+    ->view($block);
 
-/**
- * Append the cart block.
- *
- * @param string $block_id
- *
- * @return mixed
- */
-function commerce_cart_blocks_render_cart_block_command_append($block_id) {
-  try {
-    $block = \Drupal::entityTypeManager()->getStorage('block')->load($block_id);
+  $render = \Drupal::service('renderer')->render($build);
+  $block_id = str_replace('_', '-', $block_id);
 
-    if (!empty($block)) {
-      $build = \Drupal::entityTypeManager()
-        ->getViewBuilder('block')
-        ->view($block);
-    } else {
-      $build = [];
-    }
-
-    return \Drupal::service('renderer')->render($build);
-  } catch (\Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException $e) {
-    return '';
-  }
-}
-
-/**
- * Return the cart count.
- *
- * @return int
- */
-function commerce_cart_blocks_cart_count() {
-  $carts = commerce_cart_blocks_getCarts();
-
-  $count = 0;
-  if (!empty($carts)) {
-    foreach ($carts as $cart_id => $cart) {
-      foreach ($cart->getItems() as $order_item) {
-        $count += (int) $order_item->getQuantity();
-      }
-    }
-  }
-
-  return $count;
-}
-
-/**
- * @return \Drupal\commerce_order\Entity\OrderInterface[]
- */
-function commerce_cart_blocks_getCarts() {
-  /** @var \Drupal\commerce_order\Entity\OrderInterface[] $carts */
-  $carts = \Drupal::service('commerce_cart.cart_provider')->getCarts();
-  $carts = array_filter($carts, function ($cart) {
-    /** @var \Drupal\commerce_order\Entity\OrderInterface $cart */
-    // There is a chance the cart may have converted from a draft order, but
-    // is still in session. Such as just completing check out. So we verify
-    // that the cart is still a cart.
-    return $cart->hasItems() && $cart->cart->value;
-  });
-
-  return $carts;
+  return new HtmlCommand('#block-' . $block_id, $render);
 }
