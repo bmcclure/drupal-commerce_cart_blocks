@@ -20,11 +20,12 @@ class CartButtonBlock extends CartBlock {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
-        'dropdown' => TRUE,
-        'icon_type' => 'image',
-        'icon_class' => 'fa fa-shopping-cart',
-      ] + parent::defaultConfiguration();
+    $defaultConfig = [
+      'dropdown' => TRUE,
+      'icon_type' => 'image',
+      'icon_class' => 'fa fa-shopping-cart',
+    ];
+    return array_merge(parent::defaultConfiguration(), $defaultConfig);
   }
 
   /**
@@ -103,21 +104,26 @@ class CartButtonBlock extends CartBlock {
     ];
   }
 
-  protected function buildIcon() {
-    $icon = [];
-
+  private function buildIcon() {
     $iconType = $this->configuration['icon_type'];
 
-    if ($iconType == 'image') {
-      $icon['#theme'] = 'image';
-      $icon['#uri'] = drupal_get_path('module', 'commerce') . '/icons/ffffff/cart.png';
-      $icon['#alt'] = $this->t('Shopping cart');
-    } else {
-      $icon['#type'] = 'markup';
-      $icon['#markup'] = ($iconType == 'class') ? '<i class="' . $this->configuration['icon_class'] . '"></i>' : '';
-    }
+    return ($iconType === 'image') ? $this->getIconImage() : $this->getIconTag();
+  }
 
-    return $icon;
+  private function getIconImage() {
+    return [
+      '#theme' => 'image',
+      '#uri' => drupal_get_path('module', 'commerce') . '/icons/ffffff/cart.png',
+      '#alt' => $this->t('Shopping cart'),
+    ];
+  }
+
+  private function getIconTag() {
+    $iconType = $this->configuration['icon_type'];
+    return [
+      '#type' => 'markup',
+      '#markup' => ($iconType === 'class') ? '<i class="' . $this->configuration['icon_class'] . '"></i>' : '',
+    ];
   }
 
   protected function getLibraries() {

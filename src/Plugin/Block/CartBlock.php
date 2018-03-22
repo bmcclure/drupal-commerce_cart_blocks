@@ -13,22 +13,27 @@ use Drupal\Core\Form\FormStateInterface;
  *   category = @Translation("Commerce cart blocks")
  * )
  */
-class CartBlock extends CartBlockBase {
+class CartBlock extends CartBlockBase
+{
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
-    return [
-        'display_heading' => FALSE,
-        'heading_text' => '@items in your cart',
-        'show_items' => TRUE,
-      ] + parent::defaultConfiguration();
+  public function defaultConfiguration()
+  {
+    $defaultConfig = [
+      'display_heading' => FALSE,
+      'heading_text' => '@items in your cart',
+      'show_items' => TRUE,
+    ];
+
+    return array_merge(parent::defaultConfiguration(), $defaultConfig);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function blockForm($form, FormStateInterface $form_state) {
+  public function blockForm($form, FormStateInterface $form_state)
+  {
     $form = parent::blockForm($form, $form_state);
 
     $form['display_heading'] = [
@@ -58,7 +63,8 @@ class CartBlock extends CartBlockBase {
   /**
    * {@inheritdoc}
    */
-  public function blockSubmit($form, FormStateInterface $form_state) {
+  public function blockSubmit($form, FormStateInterface $form_state)
+  {
     $this->configuration['display_heading'] = $form_state->getValue('display_heading');
     $this->configuration['heading_text'] = $form_state->getValue('heading_text');
     $this->configuration['show_items'] = $form_state->getValue('show_items');
@@ -72,7 +78,8 @@ class CartBlock extends CartBlockBase {
    * @return array
    *   A render array.
    */
-  public function build() {
+  public function build()
+  {
     if ($this->shouldHide()) {
       return [];
     }
@@ -91,7 +98,8 @@ class CartBlock extends CartBlockBase {
     ];
   }
 
-  protected function buildItems() {
+  protected function buildItems()
+  {
     $showItems = $this->configuration['show_items'];
 
     $items = [];
@@ -103,24 +111,26 @@ class CartBlock extends CartBlockBase {
     return $items;
   }
 
-  protected function buildHeading() {
+  protected function buildHeading()
+  {
     $displayHeading = $this->configuration['display_heading'];
 
-    if (!$displayHeading) {
-      return [];
+    $result = [];
+
+    if ($displayHeading) {
+      $heading = $this->t($this->configuration['heading_text'], [
+        '@items' => $this->getCountText(),
+      ]);
+
+      $result['#type'] = 'markup';
+      $result['#markup'] = $heading;
     }
 
-    $heading = $this->t($this->configuration['heading_text'], [
-      '@items' => $this->getCountText(),
-    ]);
-
-    return [
-      '#type' => 'markup',
-      '#markup' => $heading,
-    ];
+    return $result;
   }
 
-  protected function getLibraries() {
+  protected function getLibraries()
+  {
     return ['commerce_cart_blocks/commerce_cart_blocks_cart'];
   }
 }
