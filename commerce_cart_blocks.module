@@ -338,6 +338,10 @@ function commerce_cart_blocks_show_cart_dialog_command(array $ajax_settings, $ca
   $linksTemplate = '<div class="commerce-cart-block--contents__links">%s</div>';
   $links = [];
 
+  if ($ajax_settings['keep_browsing']) {
+    $links[] = '<a href="#" class="button keepBrowsing dialog-cancel">' . t('Keep Browsing') . '</a>';
+  }
+
   if ($ajax_settings['cart']) {
     $links[] = '<a href="/cart" class="button viewCart">' . t('View Cart') . '</a>';
   }
@@ -349,10 +353,6 @@ function commerce_cart_blocks_show_cart_dialog_command(array $ajax_settings, $ca
       $cart = reset($carts);
       $links[] = '<a href="/checkout/' . $cart->id() . '" class="button checkout">' . t('Checkout') . '</a>';
     }
-  }
-
-  if ($ajax_settings['keep_browsing']) {
-    $links[] = '<a href="#" class="button keepBrowsing dialog-cancel">' . t('Keep Browsing') . '</a>';
   }
 
   $message .= sprintf($linksTemplate, implode("\n", $links));
