@@ -49,7 +49,7 @@ class CartButtonBlock extends CartBlock {
         'image' => $this->t('Image'),
         'class' => $this->t('Icon class'),
         '' => $this->t('No icon'),
-      ]
+      ],
     ];
 
     $form['icon_class'] = [
@@ -73,6 +73,9 @@ class CartButtonBlock extends CartBlock {
     parent::blockSubmit($form, $form_state);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function build() {
     if ($this->shouldHide()) {
       return [];
@@ -104,12 +107,18 @@ class CartButtonBlock extends CartBlock {
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   private function buildIcon() {
     $iconType = $this->configuration['icon_type'];
 
     return ($iconType === 'image') ? $this->getIconImage() : $this->getIconTag();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   private function getIconImage() {
     return [
       '#theme' => 'image',
@@ -118,6 +127,9 @@ class CartButtonBlock extends CartBlock {
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   private function getIconTag() {
     $iconType = $this->configuration['icon_type'];
     return [
@@ -126,13 +138,19 @@ class CartButtonBlock extends CartBlock {
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function getLibraries() {
     return [
       'commerce_cart_blocks/commerce_cart_blocks_cart',
-      'commerce_cart_blocks/commerce_cart_blocks_button'
+      'commerce_cart_blocks/commerce_cart_blocks_button',
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function getCartViews() {
     $cartViews = [];
 
@@ -142,4 +160,5 @@ class CartButtonBlock extends CartBlock {
 
     return $cartViews;
   }
+
 }

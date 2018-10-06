@@ -12,7 +12,11 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * CartBlockBase class.
+ */
 abstract class CartBlockBase extends BlockBase implements ContainerFactoryPluginInterface {
+
   /**
    * The cart provider.
    *
@@ -140,6 +144,9 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
     $this->setConfigurationValue('count_text_singular', $form_state->getValue('count_text_singular'));
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function buildCache() {
     $cacheableMetadata = $this->getCacheabilityMetadata();
 
@@ -150,10 +157,16 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function isInCart() {
     return \Drupal::routeMatch()->getRouteName() === 'commerce_cart.page';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function buildLinks() {
     $links = [];
 
@@ -168,7 +181,7 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
 
         $links[] = [
           '#type' => 'link',
-          '#title' => $this->t($this->configuration['checkout_link_text']),
+          '#title' => $this->configuration['checkout_link_text'],
           '#url' => Url::fromRoute('commerce_checkout.form', [
             'commerce_order' => $cart->id(),
           ]),
@@ -179,7 +192,7 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
     if ($displayLinks['cart']) {
       $links[] = [
         '#type' => 'link',
-        '#title' => $this->t($this->configuration['cart_link_text']),
+        '#title' => $this->configuration['cart_link_text'],
         '#url' => Url::fromRoute('commerce_cart.page'),
       ];
     }
@@ -187,16 +200,22 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
     return $links;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function getCountText() {
     return $this->formatPlural($this->getCartCount(), $this->configuration['count_text_singular'], $this->configuration['count_text_plural']);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function getLibraries() {
     return [];
   }
 
   /**
-   * @return \Drupal\Core\Cache\CacheableMetadata
+   * {@inheritdoc}
    */
   protected function getCacheabilityMetadata() {
     $carts = $this->getCarts();
@@ -212,11 +231,10 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
   }
 
   /**
-   * @return int
+   * {@inheritdoc}
    */
   protected function getCartCount() {
     $carts = $this->getCarts();
-
     $count = 0;
 
     foreach ($carts as $cart_id => $cart) {
@@ -229,7 +247,7 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
   }
 
   /**
-   * @return \Drupal\commerce_order\Entity\OrderInterface[]
+   * {@inheritdoc}
    */
   protected function getCarts() {
     /** @var \Drupal\commerce_order\Entity\OrderInterface[] $carts */
@@ -240,6 +258,9 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
     });
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function shouldHide() {
     return ($this->configuration['hide_if_empty'] && !$this->getCartCount());
   }
@@ -247,8 +268,8 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
   /**
    * Gets the cart views for each cart.
    *
-   * @return array An array of view ids keyed by cart order ID.
-   * An array of view ids keyed by cart order ID.
+   * @return array
+   *   An array of view ids keyed by cart order ID.
    */
   protected function getCartViews() {
     $carts = $this->getCarts();
@@ -270,12 +291,18 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
     return $cartViews;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   private function getOrderTypeIds(array $carts) {
     return array_map(function ($cart) {
       return $cart->bundle();
     }, $carts);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   private function getAvailableViews(array $carts) {
     try {
       $orderTypeIds = $this->getOrderTypeIds($carts);
@@ -290,7 +317,8 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
       }
 
       return $availableViews;
-    } catch (InvalidPluginDefinitionException $e) {
+    }
+    catch (InvalidPluginDefinitionException $e) {
       return [];
     }
   }
@@ -303,4 +331,5 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
   public function getCacheMaxAge() {
     return 0;
   }
+
 }

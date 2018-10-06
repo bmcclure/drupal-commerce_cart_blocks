@@ -1,0 +1,69 @@
+block.settings.commerce_cart_blocks_button:
+  type: block_settings
+  label: 'Cart button'
+  mapping:
+    hide_if_empty:
+      type: boolean
+      label: 'Hide if empty'
+    display_links:
+      type: sequence
+      label: 'Display links'
+      sequence:
+        type: string
+    heading_text:
+      type: label
+      label: 'Heading text'
+    cart_link_text:
+      type: label
+      label: 'Cart link text'
+    checkout_link_text:
+      type: label
+      label: 'Checkout link text'
+    count_text_singular:
+      type: label
+      label: 'Count text (singular)'
+    count_text_plural:
+      type: label
+      label: 'Count text (plural)'
+    dropdown:
+      type: boolean
+      label: 'Dropdown'
+    icon_type:
+      type: string
+      label: 'Icon type'
+    icon_class:
+      type: string
+      label: 'Icon class'
+block.settings.commerce_cart_blocks_cart:
+  type: block_settings
+  label: 'Cart'
+  mapping:
+    hide_if_empty:
+      type: boolean
+      label: 'Hide if empty'
+    display_links:
+      type: sequence
+      label: 'Display links'
+      sequence:
+        type: string
+    heading_text:
+      type: label
+      label: 'Heading text'
+    cart_link_text:
+      type: label
+      label: 'Cart link text'
+    checkout_link_text:
+      type: label
+      label: 'Checkout link text'
+    count_text_singular:
+      type: label
+      label: 'Count text (singular)'
+    count_text_plural:
+      type: label
+      label: 'Count text (plural)'
+    display_heading:
+      type: boolean
+      label: 'Display heading'
+    show_items:
+      type: boolean
+      label: 'Show items'

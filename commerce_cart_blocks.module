@@ -1,9 +1,19 @@
 <?php
 
+/**
+ * @file
+ * Contains commerce_cart_blocks.module.
+ */
+
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\StatusMessages;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Ajax\AfterCommand;
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_theme().
@@ -134,14 +144,14 @@ function commerce_cart_blocks_form_commerce_order_type_form_alter(&$form, FormSt
 /**
  * Form submission handler for 'commerce_order_type_form'.
  *
- * @param $form
+ * @param array $form
  *   The form array.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state object.
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function commerce_cart_blocks_order_type_form_submit($form, FormStateInterface $form_state) {
+function commerce_cart_blocks_order_type_form_submit(array $form, FormStateInterface $form_state) {
   /** @var \Drupal\commerce_order\Entity\OrderTypeInterface $order_type */
   $order_type = $form_state->getFormObject()->getEntity();
   $settings = $form_state->getValue(['commerce_cart_blocks']);
@@ -167,7 +177,7 @@ function commerce_cart_blocks_order_type_form_submit($form, FormStateInterface $
  *
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  */
-function commerce_cart_blocks_ajax_settings(\Drupal\Core\Entity\EntityInterface $entity) {
+function commerce_cart_blocks_ajax_settings(EntityInterface $entity) {
   /** @var \Drupal\commerce_order\Entity\OrderItemTypeInterface $item_type */
   $item_type = \Drupal::entityTypeManager()
     ->getStorage('commerce_order_item_type')
@@ -200,7 +210,7 @@ function commerce_cart_blocks_form_commerce_order_item_add_to_cart_form_alter(&$
   if (is_object($formObject) && method_exists($formObject, 'getEntity')) {
     $entity = $formObject->getEntity();
 
-    if ($entity instanceof \Drupal\Core\Entity\EntityInterface) {
+    if ($entity instanceof EntityInterface) {
       $settings = commerce_cart_blocks_ajax_settings($entity);
 
       if ($settings['enabled']) {
@@ -231,7 +241,6 @@ function commerce_cart_blocks_form_commerce_order_item_add_to_cart_form_alter(&$
  *
  * @param array $form
  *   The form array.
- *
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state.
  *
@@ -239,7 +248,7 @@ function commerce_cart_blocks_form_commerce_order_item_add_to_cart_form_alter(&$
  *   The AJAX response.
  */
 function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface $form_state) {
-  $response = new \Drupal\Core\Ajax\AjaxResponse();
+  $response = new AjaxResponse();
 
   $ajax_settings = $form_state->getValue('commerce_cart_blocks_ajax', [
     'modal_enabled' => TRUE,
@@ -247,7 +256,7 @@ function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface $for
     'append_block_id' => '',
   ]);
 
-  // Update cart blocks after adding an item to cart
+  // Update cart blocks after adding an item to cart.
   if (!$form_state->getErrors()) {
     $types = [
       'commerce_cart_blocks_cart',
@@ -258,7 +267,7 @@ function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface $for
       $query = \Drupal::entityQuery('block')
         ->condition('plugin', $block_type);
 
-      foreach ((array)$query->execute() as $block_id) {
+      foreach ((array) $query->execute() as $block_id) {
         $response->addCommand(commerce_cart_blocks_render_cart_block_command($block_id));
       }
     }
@@ -268,7 +277,7 @@ function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface $for
 
     if ($cartCount === 1 && !empty($appendId)) {
       $command = commerce_cart_blocks_render_cart_block_command_append('cart');
-      $appendCommand = new \Drupal\Core\Ajax\AfterCommand($appendId, $command);
+      $appendCommand = new AfterCommand($appendId, $command);
       $response->addCommand($appendCommand);
     }
 
@@ -281,7 +290,7 @@ function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface $for
 }
 
 /**
- * Render HTML of cart block
+ * Render HTML of cart block.
  *
  * @return HtmlCommand
  *   An AJAX command to replace the provided cart block.
@@ -301,7 +310,8 @@ function commerce_cart_blocks_render_cart_block_command($block_id) {
     }
 
     return NULL;
-  } catch (\Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException $e) {
+  }
+  catch (InvalidPluginDefinitionException $e) {
     return NULL;
   }
 }
@@ -310,8 +320,10 @@ function commerce_cart_blocks_render_cart_block_command($block_id) {
  * Append the cart block.
  *
  * @param string $block_id
+ *   Block id.
  *
  * @return mixed
+ *   Block content.
  */
 function commerce_cart_blocks_render_cart_block_command_append($block_id) {
   try {
@@ -326,11 +338,15 @@ function commerce_cart_blocks_render_cart_block_command_append($block_id) {
     }
 
     return $append;
-  } catch (\Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException $e) {
+  }
+  catch (InvalidPluginDefinitionException $e) {
     return '';
   }
 }
 
+/**
+ * Dialog command callback.
+ */
 function commerce_cart_blocks_show_cart_dialog_command(array $ajax_settings, $cartCount) {
   $messages = StatusMessages::renderMessages(NULL);
   /** @var \Drupal\Core\Render\Markup $message */
@@ -347,7 +363,7 @@ function commerce_cart_blocks_show_cart_dialog_command(array $ajax_settings, $ca
   }
 
   if ($ajax_settings['checkout']) {
-    $carts = commerce_cart_blocks_getCarts();
+    $carts = commerce_cart_blocks_get_carts();
     if (!empty($carts)) {
       /** @var \Drupal\commerce_order\Entity\OrderInterface $cart */
       $cart = reset($carts);
@@ -356,7 +372,7 @@ function commerce_cart_blocks_show_cart_dialog_command(array $ajax_settings, $ca
   }
 
   $message .= sprintf($linksTemplate, implode("\n", $links));
-  $messages['#message_list']['status'][0] = \Drupal\Core\Render\Markup::create($message);
+  $messages['#message_list']['status'][0] = Markup::create($message);
 
   $dialogOptions = [
     'width' => 'auto',
@@ -372,7 +388,7 @@ function commerce_cart_blocks_show_cart_dialog_command(array $ajax_settings, $ca
   }
 
   return new OpenModalDialogCommand(
-    t($ajax_settings['modal_title']),
+    $ajax_settings['modal_title'],
     $messages,
     $dialogOptions
   );
@@ -382,9 +398,10 @@ function commerce_cart_blocks_show_cart_dialog_command(array $ajax_settings, $ca
  * Return the cart count.
  *
  * @return int
+ *   Cart count.
  */
 function commerce_cart_blocks_cart_count() {
-  $carts = commerce_cart_blocks_getCarts();
+  $carts = commerce_cart_blocks_get_carts();
 
   $count = 0;
   if (!empty($carts)) {
@@ -399,9 +416,9 @@ function commerce_cart_blocks_cart_count() {
 }
 
 /**
- * @return \Drupal\commerce_order\Entity\OrderInterface[]
+ * Get carts.
  */
-function commerce_cart_blocks_getCarts() {
+function commerce_cart_blocks_get_carts() {
   /** @var \Drupal\commerce_order\Entity\OrderInterface[] $carts */
   $carts = \Drupal::service('commerce_cart.cart_provider')->getCarts();
   $carts = array_filter($carts, function ($cart) {
