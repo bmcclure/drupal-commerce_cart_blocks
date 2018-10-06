@@ -33,7 +33,7 @@ function commerce_cart_blocks_theme($existing, $type, $theme, $path) {
       'variables' => [
         'count' => NULL,
         'icon' => NULL,
-        'count_text' => '',
+        'button_label' => '',
         'in_cart' => NULL,
         'url' => NULL,
         'content' => NULL,

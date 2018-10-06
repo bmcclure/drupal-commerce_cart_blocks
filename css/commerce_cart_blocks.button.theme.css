@@ -15,11 +15,11 @@
 }
 .commerce-cart-block--type-button .commerce-cart-block--summary,
 .commerce-cart-block--type-button .commerce-cart-block--summary__icon img,
-.commerce-cart-block--type-button .commerce-cart-block--summary__count {
+.commerce-cart-block--type-button .commerce-cart-block--summary__label {
   vertical-align: middle;
 }
 
 .commerce-cart-block--type-button .commerce-cart-block--summary__icon,
-.commerce-cart-block--type-button .commerce-cart-block--summary__count {
+.commerce-cart-block--type-button .commerce-cart-block--summary__label {
   color: inherit;
 }

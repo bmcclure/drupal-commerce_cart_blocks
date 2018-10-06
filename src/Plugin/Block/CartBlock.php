@@ -44,7 +44,7 @@ class CartBlock extends CartBlockBase {
     $form['heading_text'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Heading text'),
-      '#description' => $this->t('The text to use for the heading, which can include the @items placeholder.'),
+      '#description' => $this->t('The text to use for the heading, which can include the @items and @total placeholders.'),
       '#default_value' => $this->configuration['heading_text'],
     ];
 
@@ -118,7 +118,7 @@ class CartBlock extends CartBlockBase {
     $result = [];
 
     if ($displayHeading) {
-      $heading = str_replace('@items', $this->getCountText(), $this->configuration['heading_text']);
+      $heading = str_replace(array('@items', '@total'), array($this->getCountText(), $this->getTotalText()), $this->configuration['heading_text']);
       $result['#type'] = 'markup';
       $result['#markup'] = $heading;
     }

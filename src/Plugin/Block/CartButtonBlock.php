@@ -22,6 +22,7 @@ class CartButtonBlock extends CartBlock {
   public function defaultConfiguration() {
     $defaultConfig = [
       'dropdown' => TRUE,
+      'button_label' => '@items',
       'icon_type' => 'image',
       'icon_class' => 'fa fa-shopping-cart',
     ];
@@ -38,6 +39,13 @@ class CartButtonBlock extends CartBlock {
       '#type' => 'checkbox',
       '#title' => $this->t('Display cart contents in a dropdown'),
       '#default_value' => $this->configuration['dropdown'],
+    ];
+
+    $form['button_label'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Button label'),
+      '#description' => $this->t('The text to show on the button, optionally using the @items and @total placeholders.'),
+      '#default_value' => $this->configuration['button_label'],
     ];
 
     $form['icon_type'] = [
@@ -67,6 +75,7 @@ class CartButtonBlock extends CartBlock {
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['dropdown'] = $form_state->getValue('commerce_cart_dropdown');
+    $this->configuration['button_label'] = $form_state->getValue('button_label');
     $this->configuration['icon_type'] = $form_state->getValue('icon_type');
     $this->configuration['icon_class'] = $form_state->getValue('icon_class');
 
@@ -98,7 +107,7 @@ class CartButtonBlock extends CartBlock {
       ],
       '#theme' => 'commerce_cart_blocks_cart_button',
       '#count' => $this->getCartCount(),
-      '#count_text' => $this->getCountText(),
+      '#button_label' => $this->getButtonLabel(),
       '#in_cart' => $this->isInCart(),
       '#icon' => $this->buildIcon(),
       '#url' => Url::fromRoute('commerce_cart.page')->toString(),
@@ -108,7 +117,7 @@ class CartButtonBlock extends CartBlock {
   }
 
   /**
-   * {@inheritdoc}
+   * Builds the icon output
    */
   private function buildIcon() {
     $iconType = $this->configuration['icon_type'];
@@ -117,7 +126,7 @@ class CartButtonBlock extends CartBlock {
   }
 
   /**
-   * {@inheritdoc}
+   * Gets the image for the icon
    */
   private function getIconImage() {
     return [
@@ -128,7 +137,7 @@ class CartButtonBlock extends CartBlock {
   }
 
   /**
-   * {@inheritdoc}
+   * Gets the HTML tag used for the icon as markup
    */
   private function getIconTag() {
     $iconType = $this->configuration['icon_type'];
@@ -159,6 +168,14 @@ class CartButtonBlock extends CartBlock {
     }
 
     return $cartViews;
+  }
+
+  /**
+   * Gets the text representation of the count of items
+   */
+  protected function getButtonLabel() {
+    $buttonLabel = $this->configuration['button_label'];
+    return str_replace(array('@items', '@total'), array($this->getCountText(), $this->getTotalText()), $buttonLabel);
   }
 
 }

@@ -3,6 +3,7 @@
 namespace Drupal\commerce_cart_blocks\Plugin\Block;
 
 use Drupal\commerce_cart\CartProviderInterface;
+use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -201,10 +202,44 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
   }
 
   /**
-   * {@inheritdoc}
+   * Gets the text representation of the count of items
    */
   protected function getCountText() {
     return $this->formatPlural($this->getCartCount(), $this->configuration['count_text_singular'], $this->configuration['count_text_plural']);
+  }
+
+  /**
+   * Gets the total price of the carts
+   */
+  protected function getTotal() {
+    $carts = $this->getCarts();
+    /** @var OrderInterface $firstCart */
+    $firstCart = array_shift($carts);
+    $price = $firstCart->getTotalPrice();
+
+    foreach ($carts as $cart_id => $cart) {
+      $price->add($cart->getTotalPrice());
+    }
+
+    return $price;
+  }
+
+  /**
+   * Gets the total price as a formatted string.
+   *
+   * @return mixed|null
+   */
+  protected function getTotalText() {
+    $element = [];
+    $element['price'] = [
+      '#type' => 'inline_template',
+      '#template' => '{{ price|commerce_price_format }}',
+      '#context' => [
+        'price' => $this->getTotal(),
+      ],
+    ];
+
+    return render($element);
   }
 
   /**

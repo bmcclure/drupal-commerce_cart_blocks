@@ -10,9 +10,9 @@ block.settings.commerce_cart_blocks_button:
       label: 'Display links'
       sequence:
         type: string
-    heading_text:
+    button_label:
       type: label
-      label: 'Heading text'
+      label: 'Button label'
     cart_link_text:
       type: label
       label: 'Cart link text'
