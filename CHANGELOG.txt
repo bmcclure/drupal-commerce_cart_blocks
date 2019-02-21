@@ -1,3 +1,12 @@
+Commerce Cart Blocks 8.x-1.0-beta1, 2019-02-21
+----------------------------------------------
+#3004939 by AndyD328, stevepurkiss, bmcclure: Site breaks when there is no cart
+#3015043 by chipway, Aanal.addweb: All dependencies must be prefixed
+#2906453 by bmcclure: Total price of cart in button
+#2996470 by Aston Victor, bmcclure: Coding standard
+#2894640 by kamkejj, amklose, bmcclure: Append Cart block and add modal buttons
+#2887838 by bmcclure: Initial support for AJAX add to cart (highly experimental)
+
 Commerce Cart Blocks 8.x-1.0-alpha1, 2017-04-14
 -----------------------------------------------
 No changes since initial release
