@@ -4,6 +4,7 @@ namespace Drupal\commerce_cart_blocks\Plugin\Block;
 
 use Drupal\commerce_cart\CartProviderInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_price\Price;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -215,13 +216,27 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
     $carts = $this->getCarts();
     /** @var OrderInterface $firstCart */
     $firstCart = array_shift($carts);
-    $price = $firstCart->getTotalPrice();
 
-    foreach ($carts as $cart_id => $cart) {
-      $price->add($cart->getTotalPrice());
+    if (!empty($firstCart)) {
+      $price = $firstCart->getTotalPrice();
+
+      foreach ($carts as $cart_id => $cart) {
+        $price->add($cart->getTotalPrice());
+      }
+    } else {
+      $price = $this->createPrice(0);
     }
 
     return $price;
+  }
+
+  protected function createPrice($amount) {
+    /** @var \Drupal\commerce_store\StoreStorageInterface $storage */
+    $storage = $this->entityTypeManager->getStorage('commerce_store');
+    $defaultStore = $storage->loadDefault();
+    $currencyCode = $defaultStore ? $defaultStore->getDefaultCurrencyCode() : 'USD';
+
+    return new Price($amount, $currencyCode);
   }
 
   /**
@@ -368,3 +383,4 @@ abstract class CartBlockBase extends BlockBase implements ContainerFactoryPlugin
   }
 
 }
+
