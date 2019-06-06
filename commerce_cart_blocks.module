@@ -219,10 +219,10 @@ function commerce_cart_blocks_form_commerce_order_item_add_to_cart_form_alter(&$
           '#value' => $settings,
         ];
 
-        $form['actions']['submit']['#attributes']['class'][] = 'use-ajax-submit';
         $form['actions']['submit']['#ajax'] = [
           'callback' => 'commerce_cart_blocks_ajax_callback',
           'wrapper' => 'commerce-product-add-to-cart-form',
+          'event' => 'click',
           'effect' => 'fade',
           'progress' => [
             'type' => 'throbber',
@@ -231,6 +231,8 @@ function commerce_cart_blocks_form_commerce_order_item_add_to_cart_form_alter(&$
         ];
 
         $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
+        $form['#attached']['library'][] = 'core/jquery.form';
+        $form['#attached']['library'][] = 'core/drupal.ajax';
       }
     }
   }
@@ -285,6 +287,8 @@ function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface $for
       $response->addCommand(commerce_cart_blocks_show_cart_dialog_command($ajax_settings, $cartCount));
     }
   }
+
+  $test = 'here';
 
   return $response;
 }
