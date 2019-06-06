@@ -1,3 +1,12 @@
+commerce_cart_blocks_add_to_cart_form:
+  version: VERSION
+  js:
+    js/commerce_cart_blocks_add_to_cart_form.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.form
+    - core/drupal
+    - core/drupal.ajax
 commerce_cart_blocks_cart:
   version: VERSION
   css:

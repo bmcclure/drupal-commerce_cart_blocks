@@ -75,11 +75,21 @@ function commerce_cart_blocks_form_commerce_order_type_form_alter(&$form, FormSt
     ],
   ];
 
+  $form['commerce_cart_blocks']['commerce_cart_blocks_refresh_page_after_modal'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Refresh the page when closing the modal window'),
+    '#weight' => 2,
+    '#default_value' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_refresh_page_after_modal', FALSE),
+    '#states' => [
+      'visible' => [':input[name="commerce_cart_blocks[commerce_cart_blocks_ajax_modal]"]' => ['checked' => TRUE]],
+    ]
+  ];
+
   $form['commerce_cart_blocks']['commerce_cart_blocks_links'] = [
     '#type' => 'details',
     '#title' => t('Add links to modal'),
     '#description' => t('You can optionally add buttons to the modal window that link to the cart, checkout, or back to the current page.'),
-    '#weight' => 2,
+    '#weight' => 3,
     '#open' => TRUE,
     '#collapsible' => TRUE,
     '#states' => [
@@ -120,7 +130,7 @@ function commerce_cart_blocks_form_commerce_order_type_form_alter(&$form, FormSt
   $form['commerce_cart_blocks']['commerce_cart_blocks_ajax_modal_title'] = [
     '#type' => 'textfield',
     '#title' => 'Title of the cart modal',
-    '#weight' => 3,
+    '#weight' => 4,
     '#default_value' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax_modal_title', 'Cart'),
     '#states' => [
       'visible' => [':input[name="commerce_cart_blocks[commerce_cart_blocks_ajax]"]' => ['checked' => TRUE]],
@@ -130,7 +140,7 @@ function commerce_cart_blocks_form_commerce_order_type_form_alter(&$form, FormSt
   $form['commerce_cart_blocks']['commerce_cart_blocks_append_block_id'] = [
     '#type' => 'textfield',
     '#title' => t('Block id to append cart to block'),
-    '#weight' => 4,
+    '#weight' => 5,
     '#description' => t('Enter the block id the cart block immediately follows to append when entering the first cart item.'),
     '#default_value' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_append_block_id', ''),
     '#states' => [
@@ -158,6 +168,7 @@ function commerce_cart_blocks_order_type_form_submit(array $form, FormStateInter
   $order_type
     ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax', $settings['commerce_cart_blocks_ajax'])
     ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax_modal', $settings['commerce_cart_blocks_ajax_modal'])
+    ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_refresh_page_after_modal', $settings['commerce_cart_blocks_refresh_page_after_modal'])
     ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_cart', $settings['commerce_cart_blocks_links']['commerce_cart_blocks_add_cart'])
     ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_checkout', $settings['commerce_cart_blocks_links']['commerce_cart_blocks_add_checkout'])
     ->setThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_keep_browsing', $settings['commerce_cart_blocks_links']['commerce_cart_blocks_add_keep_browsing'])
@@ -191,6 +202,7 @@ function commerce_cart_blocks_ajax_settings(EntityInterface $entity) {
   return [
     'enabled' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax', FALSE),
     'modal_enabled' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_ajax_modal', TRUE),
+    'refresh_page_after_modal' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_refresh_page_after_modal', FALSE),
     'cart' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_cart', FALSE),
     'checkout' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_checkout', FALSE),
     'keep_browsing' => $order_type->getThirdPartySetting('commerce_cart_blocks', 'commerce_cart_blocks_add_keep_browsing', FALSE),
@@ -231,8 +243,8 @@ function commerce_cart_blocks_form_commerce_order_item_add_to_cart_form_alter(&$
         ];
 
         $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
-        $form['#attached']['library'][] = 'core/jquery.form';
-        $form['#attached']['library'][] = 'core/drupal.ajax';
+        $form['#attached']['library'][] = 'commerce_cart_blocks/commerce_cart_blocks_add_to_cart_form';
+        $form['#attached']['drupalSettings']['commerce_cart_blocks']['ajax'] = $settings;
       }
     }
   }
@@ -274,6 +286,7 @@ function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface $for
       }
     }
 
+    // @todo Figure out why a page reload is sometimes required.
     $cartCount = commerce_cart_blocks_cart_count();
     $appendId = $ajax_settings['append_block_id'];
 
@@ -383,10 +396,11 @@ function commerce_cart_blocks_show_cart_dialog_command(array $ajax_settings, $ca
     'modal' => TRUE,
     'fluid' => TRUE,
     'resizable' => FALSE,
+    'dialogClass' => 'added-to-cart-dialog',
   ];
 
   if ($cartCount === 1) {
-    $dialogOptions['dialogClass'] = 'js-firstItem';
+    $dialogOptions['dialogClass'] .= ' js-firstItem';
   }
 
   return new OpenModalDialogCommand(
