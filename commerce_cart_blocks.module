@@ -288,8 +288,6 @@ function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface $for
     }
   }
 
-  $test = 'here';
-
   return $response;
 }
 
