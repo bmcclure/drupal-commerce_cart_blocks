@@ -298,6 +298,12 @@ function commerce_cart_blocks_ajax_callback(array $form, FormStateInterface $for
 
     if ($ajax_settings['modal_enabled']) {
       $response->addCommand(commerce_cart_blocks_show_cart_dialog_command($ajax_settings, $cartCount));
+    }else{
+      $status_messages = array('#type' => 'status_messages');
+      $messages = \Drupal::service('renderer')->renderRoot($status_messages);
+      if (!empty($messages)) {
+          $response->addCommand(new \Drupal\Core\Ajax\PrependCommand('.commerce-order-item-add-to-cart-form', $messages));
+      }
     }
   }
 
