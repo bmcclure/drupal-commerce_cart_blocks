@@ -3,6 +3,7 @@ type: module
 description: 'Provides new types of Cart blocks for Drupal Commerce.'
 version: 8.x-1.x
 core: 8.x
+core_version_requirement: ^8 || ^9
 package: Commerce
 dependencies:
   - commerce:commerce_cart
